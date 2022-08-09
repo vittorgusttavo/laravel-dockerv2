@@ -1,0 +1,33 @@
+# Versão
+version: '3.7'
+# Serviços que ficarao dento do Container
+services:
+  app_laravel:
+    container_name: php-laravel
+    build:
+      args:
+         user: vt
+         uid: 1000
+      context: .
+      dockerfile: .docker/Dockerfile
+    image: 'laravelapp'
+    ports:
+      - 8080:80
+    volumes:
+      - ./src:/var/www/html
+      - ./.docker/vhost.conf:/etc/apache2/sites-enabled/000-default.conf
+    depends_on:
+      - db
+  db:
+    container_name: mysql_laravel
+    image: mysql:latest
+    restart: always
+    ports:
+      - '3306:3306'
+    environment:
+      MYSQL_DATABASE: 'laravel_db'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+      MYSQL_ROOT_PASSWORD: ''
+    volumes:
+      - ./db:/var/lib/mysql
+  
